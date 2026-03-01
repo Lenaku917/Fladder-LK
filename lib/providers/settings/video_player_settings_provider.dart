@@ -126,7 +126,7 @@ class VideoPlayerSettingsProviderNotifier extends StateNotifier<VideoPlayerSetti
       }
     }
   }
-  
+
   void setEnableSpeedBoost(bool value) => state = state.copyWith(enableSpeedBoost: value);
 
   void setSpeedBoostRate(double value) {
@@ -135,4 +135,14 @@ class VideoPlayerSettingsProviderNotifier extends StateNotifier<VideoPlayerSetti
   }
 
   void setEnableDoubleTapSeek(bool value) => state = state.copyWith(enableDoubleTapSeek: value);
+
+  void setStaticNextUpTime(int seconds) {
+    final clampedValue = seconds.clamp(1, 120);
+    state = state.copyWith(staticNextUpTime: Duration(seconds: clampedValue));
+  }
+
+  void setAutoNextDelay(int seconds) {
+    final clampedValue = seconds.clamp(0, 120);
+    state = state.copyWith(autoNextDelay: Duration(seconds: clampedValue));
+  }
 }

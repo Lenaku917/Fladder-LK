@@ -24,7 +24,10 @@ mixin _$VideoPlayerSettingsModel implements DiagnosticableTreeMixin {
   PlayerOptions? get playerOptions;
   double get internalVolume;
   Set<DeviceOrientation>? get allowedOrientations;
+  AutoNextStyle get nextVideoStyle;
   AutoNextType get nextVideoType;
+  Duration get staticNextUpTime;
+  Duration get autoNextDelay;
   Bitrate get maxHomeBitrate;
   Bitrate get maxInternetBitrate;
   String? get audioDevice;
@@ -40,8 +43,7 @@ mixin _$VideoPlayerSettingsModel implements DiagnosticableTreeMixin {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
   $VideoPlayerSettingsModelCopyWith<VideoPlayerSettingsModel> get copyWith =>
-      _$VideoPlayerSettingsModelCopyWithImpl<VideoPlayerSettingsModel>(
-          this as VideoPlayerSettingsModel, _$identity);
+      _$VideoPlayerSettingsModelCopyWithImpl<VideoPlayerSettingsModel>(this as VideoPlayerSettingsModel, _$identity);
 
   /// Serializes this VideoPlayerSettingsModel to a JSON map.
   Map<String, dynamic> toJson();
@@ -60,7 +62,10 @@ mixin _$VideoPlayerSettingsModel implements DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('playerOptions', playerOptions))
       ..add(DiagnosticsProperty('internalVolume', internalVolume))
       ..add(DiagnosticsProperty('allowedOrientations', allowedOrientations))
+      ..add(DiagnosticsProperty('nextVideoStyle', nextVideoStyle))
       ..add(DiagnosticsProperty('nextVideoType', nextVideoType))
+      ..add(DiagnosticsProperty('staticNextUpTime', staticNextUpTime))
+      ..add(DiagnosticsProperty('autoNextDelay', autoNextDelay))
       ..add(DiagnosticsProperty('maxHomeBitrate', maxHomeBitrate))
       ..add(DiagnosticsProperty('maxInternetBitrate', maxInternetBitrate))
       ..add(DiagnosticsProperty('audioDevice', audioDevice))
@@ -74,14 +79,14 @@ mixin _$VideoPlayerSettingsModel implements DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'VideoPlayerSettingsModel(screenBrightness: $screenBrightness, videoFit: $videoFit, fillScreen: $fillScreen, hardwareAccel: $hardwareAccel, useLibass: $useLibass, enableTunneling: $enableTunneling, bufferSize: $bufferSize, playerOptions: $playerOptions, internalVolume: $internalVolume, allowedOrientations: $allowedOrientations, nextVideoType: $nextVideoType, maxHomeBitrate: $maxHomeBitrate, maxInternetBitrate: $maxInternetBitrate, audioDevice: $audioDevice, segmentSkipSettings: $segmentSkipSettings, hotKeys: $hotKeys, screensaver: $screensaver, enableSpeedBoost: $enableSpeedBoost, speedBoostRate: $speedBoostRate, enableDoubleTapSeek: $enableDoubleTapSeek)';
+    return 'VideoPlayerSettingsModel(screenBrightness: $screenBrightness, videoFit: $videoFit, fillScreen: $fillScreen, hardwareAccel: $hardwareAccel, useLibass: $useLibass, enableTunneling: $enableTunneling, bufferSize: $bufferSize, playerOptions: $playerOptions, internalVolume: $internalVolume, allowedOrientations: $allowedOrientations, nextVideoStyle: $nextVideoStyle, nextVideoType: $nextVideoType, staticNextUpTime: $staticNextUpTime, autoNextDelay: $autoNextDelay, maxHomeBitrate: $maxHomeBitrate, maxInternetBitrate: $maxInternetBitrate, audioDevice: $audioDevice, segmentSkipSettings: $segmentSkipSettings, hotKeys: $hotKeys, screensaver: $screensaver, enableSpeedBoost: $enableSpeedBoost, speedBoostRate: $speedBoostRate, enableDoubleTapSeek: $enableDoubleTapSeek)';
   }
 }
 
 /// @nodoc
 abstract mixin class $VideoPlayerSettingsModelCopyWith<$Res> {
-  factory $VideoPlayerSettingsModelCopyWith(VideoPlayerSettingsModel value,
-          $Res Function(VideoPlayerSettingsModel) _then) =
+  factory $VideoPlayerSettingsModelCopyWith(
+          VideoPlayerSettingsModel value, $Res Function(VideoPlayerSettingsModel) _then) =
       _$VideoPlayerSettingsModelCopyWithImpl;
   @useResult
   $Res call(
@@ -95,7 +100,10 @@ abstract mixin class $VideoPlayerSettingsModelCopyWith<$Res> {
       PlayerOptions? playerOptions,
       double internalVolume,
       Set<DeviceOrientation>? allowedOrientations,
+      AutoNextStyle nextVideoStyle,
       AutoNextType nextVideoType,
+      Duration staticNextUpTime,
+      Duration autoNextDelay,
       Bitrate maxHomeBitrate,
       Bitrate maxInternetBitrate,
       String? audioDevice,
@@ -108,8 +116,7 @@ abstract mixin class $VideoPlayerSettingsModelCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$VideoPlayerSettingsModelCopyWithImpl<$Res>
-    implements $VideoPlayerSettingsModelCopyWith<$Res> {
+class _$VideoPlayerSettingsModelCopyWithImpl<$Res> implements $VideoPlayerSettingsModelCopyWith<$Res> {
   _$VideoPlayerSettingsModelCopyWithImpl(this._self, this._then);
 
   final VideoPlayerSettingsModel _self;
@@ -130,7 +137,10 @@ class _$VideoPlayerSettingsModelCopyWithImpl<$Res>
     Object? playerOptions = freezed,
     Object? internalVolume = null,
     Object? allowedOrientations = freezed,
+    Object? nextVideoStyle = null,
     Object? nextVideoType = null,
+    Object? staticNextUpTime = null,
+    Object? autoNextDelay = null,
     Object? maxHomeBitrate = null,
     Object? maxInternetBitrate = null,
     Object? audioDevice = freezed,
@@ -182,10 +192,22 @@ class _$VideoPlayerSettingsModelCopyWithImpl<$Res>
           ? _self.allowedOrientations
           : allowedOrientations // ignore: cast_nullable_to_non_nullable
               as Set<DeviceOrientation>?,
+      nextVideoStyle: null == nextVideoStyle
+          ? _self.nextVideoStyle
+          : nextVideoStyle // ignore: cast_nullable_to_non_nullable
+              as AutoNextStyle,
       nextVideoType: null == nextVideoType
           ? _self.nextVideoType
           : nextVideoType // ignore: cast_nullable_to_non_nullable
               as AutoNextType,
+      staticNextUpTime: null == staticNextUpTime
+          ? _self.staticNextUpTime
+          : staticNextUpTime // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      autoNextDelay: null == autoNextDelay
+          ? _self.autoNextDelay
+          : autoNextDelay // ignore: cast_nullable_to_non_nullable
+              as Duration,
       maxHomeBitrate: null == maxHomeBitrate
           ? _self.maxHomeBitrate
           : maxHomeBitrate // ignore: cast_nullable_to_non_nullable
@@ -330,7 +352,10 @@ extension VideoPlayerSettingsModelPatterns on VideoPlayerSettingsModel {
             PlayerOptions? playerOptions,
             double internalVolume,
             Set<DeviceOrientation>? allowedOrientations,
+            AutoNextStyle nextVideoStyle,
             AutoNextType nextVideoType,
+            Duration staticNextUpTime,
+            Duration autoNextDelay,
             Bitrate maxHomeBitrate,
             Bitrate maxInternetBitrate,
             String? audioDevice,
@@ -357,7 +382,10 @@ extension VideoPlayerSettingsModelPatterns on VideoPlayerSettingsModel {
             _that.playerOptions,
             _that.internalVolume,
             _that.allowedOrientations,
+            _that.nextVideoStyle,
             _that.nextVideoType,
+            _that.staticNextUpTime,
+            _that.autoNextDelay,
             _that.maxHomeBitrate,
             _that.maxInternetBitrate,
             _that.audioDevice,
@@ -398,7 +426,10 @@ extension VideoPlayerSettingsModelPatterns on VideoPlayerSettingsModel {
             PlayerOptions? playerOptions,
             double internalVolume,
             Set<DeviceOrientation>? allowedOrientations,
+            AutoNextStyle nextVideoStyle,
             AutoNextType nextVideoType,
+            Duration staticNextUpTime,
+            Duration autoNextDelay,
             Bitrate maxHomeBitrate,
             Bitrate maxInternetBitrate,
             String? audioDevice,
@@ -424,7 +455,10 @@ extension VideoPlayerSettingsModelPatterns on VideoPlayerSettingsModel {
             _that.playerOptions,
             _that.internalVolume,
             _that.allowedOrientations,
+            _that.nextVideoStyle,
             _that.nextVideoType,
+            _that.staticNextUpTime,
+            _that.autoNextDelay,
             _that.maxHomeBitrate,
             _that.maxInternetBitrate,
             _that.audioDevice,
@@ -464,7 +498,10 @@ extension VideoPlayerSettingsModelPatterns on VideoPlayerSettingsModel {
             PlayerOptions? playerOptions,
             double internalVolume,
             Set<DeviceOrientation>? allowedOrientations,
+            AutoNextStyle nextVideoStyle,
             AutoNextType nextVideoType,
+            Duration staticNextUpTime,
+            Duration autoNextDelay,
             Bitrate maxHomeBitrate,
             Bitrate maxInternetBitrate,
             String? audioDevice,
@@ -490,7 +527,10 @@ extension VideoPlayerSettingsModelPatterns on VideoPlayerSettingsModel {
             _that.playerOptions,
             _that.internalVolume,
             _that.allowedOrientations,
+            _that.nextVideoStyle,
             _that.nextVideoType,
+            _that.staticNextUpTime,
+            _that.autoNextDelay,
             _that.maxHomeBitrate,
             _that.maxInternetBitrate,
             _that.audioDevice,
@@ -508,8 +548,7 @@ extension VideoPlayerSettingsModelPatterns on VideoPlayerSettingsModel {
 
 /// @nodoc
 @JsonSerializable()
-class _VideoPlayerSettingsModel extends VideoPlayerSettingsModel
-    with DiagnosticableTreeMixin {
+class _VideoPlayerSettingsModel extends VideoPlayerSettingsModel with DiagnosticableTreeMixin {
   _VideoPlayerSettingsModel(
       {this.screenBrightness,
       this.videoFit = BoxFit.contain,
@@ -521,12 +560,14 @@ class _VideoPlayerSettingsModel extends VideoPlayerSettingsModel
       this.playerOptions,
       this.internalVolume = 100,
       final Set<DeviceOrientation>? allowedOrientations,
+      this.nextVideoStyle = AutoNextStyle.detailed,
       this.nextVideoType = AutoNextType.smart,
+      this.staticNextUpTime = const Duration(seconds: 30),
+      this.autoNextDelay = const Duration(seconds: 5),
       this.maxHomeBitrate = Bitrate.original,
       this.maxInternetBitrate = Bitrate.original,
       this.audioDevice,
-      final Map<MediaSegmentType, SegmentSkip> segmentSkipSettings =
-          defaultSegmentSkipValues,
+      final Map<MediaSegmentType, SegmentSkip> segmentSkipSettings = defaultSegmentSkipValues,
       final Map<VideoHotKeys, KeyCombination> hotKeys = const {},
       this.screensaver = Screensaver.logo,
       this.enableSpeedBoost = false,
@@ -536,8 +577,7 @@ class _VideoPlayerSettingsModel extends VideoPlayerSettingsModel
         _segmentSkipSettings = segmentSkipSettings,
         _hotKeys = hotKeys,
         super._();
-  factory _VideoPlayerSettingsModel.fromJson(Map<String, dynamic> json) =>
-      _$VideoPlayerSettingsModelFromJson(json);
+  factory _VideoPlayerSettingsModel.fromJson(Map<String, dynamic> json) => _$VideoPlayerSettingsModelFromJson(json);
 
   @override
   final double? screenBrightness;
@@ -569,15 +609,23 @@ class _VideoPlayerSettingsModel extends VideoPlayerSettingsModel
   Set<DeviceOrientation>? get allowedOrientations {
     final value = _allowedOrientations;
     if (value == null) return null;
-    if (_allowedOrientations is EqualUnmodifiableSetView)
-      return _allowedOrientations;
+    if (_allowedOrientations is EqualUnmodifiableSetView) return _allowedOrientations;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableSetView(value);
   }
 
   @override
   @JsonKey()
+  final AutoNextStyle nextVideoStyle;
+  @override
+  @JsonKey()
   final AutoNextType nextVideoType;
+  @override
+  @JsonKey()
+  final Duration staticNextUpTime;
+  @override
+  @JsonKey()
+  final Duration autoNextDelay;
   @override
   @JsonKey()
   final Bitrate maxHomeBitrate;
@@ -590,8 +638,7 @@ class _VideoPlayerSettingsModel extends VideoPlayerSettingsModel
   @override
   @JsonKey()
   Map<MediaSegmentType, SegmentSkip> get segmentSkipSettings {
-    if (_segmentSkipSettings is EqualUnmodifiableMapView)
-      return _segmentSkipSettings;
+    if (_segmentSkipSettings is EqualUnmodifiableMapView) return _segmentSkipSettings;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_segmentSkipSettings);
   }
@@ -624,8 +671,7 @@ class _VideoPlayerSettingsModel extends VideoPlayerSettingsModel
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
   _$VideoPlayerSettingsModelCopyWith<_VideoPlayerSettingsModel> get copyWith =>
-      __$VideoPlayerSettingsModelCopyWithImpl<_VideoPlayerSettingsModel>(
-          this, _$identity);
+      __$VideoPlayerSettingsModelCopyWithImpl<_VideoPlayerSettingsModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -648,7 +694,10 @@ class _VideoPlayerSettingsModel extends VideoPlayerSettingsModel
       ..add(DiagnosticsProperty('playerOptions', playerOptions))
       ..add(DiagnosticsProperty('internalVolume', internalVolume))
       ..add(DiagnosticsProperty('allowedOrientations', allowedOrientations))
+      ..add(DiagnosticsProperty('nextVideoStyle', nextVideoStyle))
       ..add(DiagnosticsProperty('nextVideoType', nextVideoType))
+      ..add(DiagnosticsProperty('staticNextUpTime', staticNextUpTime))
+      ..add(DiagnosticsProperty('autoNextDelay', autoNextDelay))
       ..add(DiagnosticsProperty('maxHomeBitrate', maxHomeBitrate))
       ..add(DiagnosticsProperty('maxInternetBitrate', maxInternetBitrate))
       ..add(DiagnosticsProperty('audioDevice', audioDevice))
@@ -662,15 +711,14 @@ class _VideoPlayerSettingsModel extends VideoPlayerSettingsModel
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'VideoPlayerSettingsModel(screenBrightness: $screenBrightness, videoFit: $videoFit, fillScreen: $fillScreen, hardwareAccel: $hardwareAccel, useLibass: $useLibass, enableTunneling: $enableTunneling, bufferSize: $bufferSize, playerOptions: $playerOptions, internalVolume: $internalVolume, allowedOrientations: $allowedOrientations, nextVideoType: $nextVideoType, maxHomeBitrate: $maxHomeBitrate, maxInternetBitrate: $maxInternetBitrate, audioDevice: $audioDevice, segmentSkipSettings: $segmentSkipSettings, hotKeys: $hotKeys, screensaver: $screensaver, enableSpeedBoost: $enableSpeedBoost, speedBoostRate: $speedBoostRate, enableDoubleTapSeek: $enableDoubleTapSeek)';
+    return 'VideoPlayerSettingsModel(screenBrightness: $screenBrightness, videoFit: $videoFit, fillScreen: $fillScreen, hardwareAccel: $hardwareAccel, useLibass: $useLibass, enableTunneling: $enableTunneling, bufferSize: $bufferSize, playerOptions: $playerOptions, internalVolume: $internalVolume, allowedOrientations: $allowedOrientations, nextVideoStyle: $nextVideoStyle, nextVideoType: $nextVideoType, staticNextUpTime: $staticNextUpTime, autoNextDelay: $autoNextDelay, maxHomeBitrate: $maxHomeBitrate, maxInternetBitrate: $maxInternetBitrate, audioDevice: $audioDevice, segmentSkipSettings: $segmentSkipSettings, hotKeys: $hotKeys, screensaver: $screensaver, enableSpeedBoost: $enableSpeedBoost, speedBoostRate: $speedBoostRate, enableDoubleTapSeek: $enableDoubleTapSeek)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$VideoPlayerSettingsModelCopyWith<$Res>
-    implements $VideoPlayerSettingsModelCopyWith<$Res> {
-  factory _$VideoPlayerSettingsModelCopyWith(_VideoPlayerSettingsModel value,
-          $Res Function(_VideoPlayerSettingsModel) _then) =
+abstract mixin class _$VideoPlayerSettingsModelCopyWith<$Res> implements $VideoPlayerSettingsModelCopyWith<$Res> {
+  factory _$VideoPlayerSettingsModelCopyWith(
+          _VideoPlayerSettingsModel value, $Res Function(_VideoPlayerSettingsModel) _then) =
       __$VideoPlayerSettingsModelCopyWithImpl;
   @override
   @useResult
@@ -685,7 +733,10 @@ abstract mixin class _$VideoPlayerSettingsModelCopyWith<$Res>
       PlayerOptions? playerOptions,
       double internalVolume,
       Set<DeviceOrientation>? allowedOrientations,
+      AutoNextStyle nextVideoStyle,
       AutoNextType nextVideoType,
+      Duration staticNextUpTime,
+      Duration autoNextDelay,
       Bitrate maxHomeBitrate,
       Bitrate maxInternetBitrate,
       String? audioDevice,
@@ -698,8 +749,7 @@ abstract mixin class _$VideoPlayerSettingsModelCopyWith<$Res>
 }
 
 /// @nodoc
-class __$VideoPlayerSettingsModelCopyWithImpl<$Res>
-    implements _$VideoPlayerSettingsModelCopyWith<$Res> {
+class __$VideoPlayerSettingsModelCopyWithImpl<$Res> implements _$VideoPlayerSettingsModelCopyWith<$Res> {
   __$VideoPlayerSettingsModelCopyWithImpl(this._self, this._then);
 
   final _VideoPlayerSettingsModel _self;
@@ -720,7 +770,10 @@ class __$VideoPlayerSettingsModelCopyWithImpl<$Res>
     Object? playerOptions = freezed,
     Object? internalVolume = null,
     Object? allowedOrientations = freezed,
+    Object? nextVideoStyle = null,
     Object? nextVideoType = null,
+    Object? staticNextUpTime = null,
+    Object? autoNextDelay = null,
     Object? maxHomeBitrate = null,
     Object? maxInternetBitrate = null,
     Object? audioDevice = freezed,
@@ -772,10 +825,22 @@ class __$VideoPlayerSettingsModelCopyWithImpl<$Res>
           ? _self._allowedOrientations
           : allowedOrientations // ignore: cast_nullable_to_non_nullable
               as Set<DeviceOrientation>?,
+      nextVideoStyle: null == nextVideoStyle
+          ? _self.nextVideoStyle
+          : nextVideoStyle // ignore: cast_nullable_to_non_nullable
+              as AutoNextStyle,
       nextVideoType: null == nextVideoType
           ? _self.nextVideoType
           : nextVideoType // ignore: cast_nullable_to_non_nullable
               as AutoNextType,
+      staticNextUpTime: null == staticNextUpTime
+          ? _self.staticNextUpTime
+          : staticNextUpTime // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      autoNextDelay: null == autoNextDelay
+          ? _self.autoNextDelay
+          : autoNextDelay // ignore: cast_nullable_to_non_nullable
+              as Duration,
       maxHomeBitrate: null == maxHomeBitrate
           ? _self.maxHomeBitrate
           : maxHomeBitrate // ignore: cast_nullable_to_non_nullable

@@ -42,6 +42,7 @@ class VideoPlayerNextWrapper extends ConsumerStatefulWidget {
 class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper> {
   bool show = false;
   bool showOverwrite = false;
+  late AutoNextStyle nextStyle = ref.read(videoPlayerSettingsProvider.select((value) => value.nextVideoStyle));
   late RestartableTimerController timerController =
       RestartableTimerController(const Duration(seconds: 30), const Duration(milliseconds: 33), onTimeout: onTimeOut);
 
@@ -55,7 +56,7 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
     hideNextUp();
   }
 
-  void showNextScreen(MediaPlaybackModel model) {
+  void showNextScreen(MediaPlaybackModel model, Duration remainingPlaytime) {
     final nextUp = ref.read(playBackModel.select((value) => value?.nextVideo));
     if (nextUp == null) return;
     if (show) return;
@@ -65,7 +66,11 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
 
     setState(() {
       show = true;
-      timerController.reset();
+      // Calculate countdown: remaining playtime + autoNextDelay
+      final delay = ref.read(videoPlayerSettingsProvider.select((value) => value.autoNextDelay));
+      final totalCountdown = remainingPlaytime + delay;
+
+      timerController.setDuration(totalCountdown);
       timerController.play();
     });
   }
@@ -78,18 +83,20 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
       return;
     }
 
-    final nextType = ref.read(videoPlayerSettingsProvider.select((value) => value.nextVideoType));
-    if (nextType == AutoNextType.off || model.duration < const Duration(seconds: 40)) {
+    if (nextStyle == AutoNextStyle.off || model.duration < const Duration(seconds: 40)) {
       showOverwrite = false;
       show = false;
       return;
     }
 
+    final nextType = ref.read(videoPlayerSettingsProvider.select((value) => value.nextVideoType));
     final credits = ref.read(playBackModel)?.mediaSegments?.outro;
+    final remaining = model.duration - model.position;
+    final staticNextUpTime = ref.read(videoPlayerSettingsProvider.select((value) => value.staticNextUpTime));
 
     if (nextType == AutoNextType.static || credits == null) {
-      if ((model.duration - model.position).abs() < const Duration(seconds: 32)) {
-        showNextScreen(model);
+      if (remaining.abs() < staticNextUpTime) {
+        showNextScreen(model, remaining);
         return;
       }
     } else if (nextType == AutoNextType.smart) {
@@ -98,11 +105,11 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
       final timeLeft = model.duration - credits.end;
       if (credits.end > resumeDuration && timeLeft < const Duration(seconds: 30)) {
         if (model.position >= credits.start) {
-          showNextScreen(model);
+          showNextScreen(model, timeLeft);
           return;
         }
-      } else if ((model.duration - model.position).abs() < const Duration(seconds: 32)) {
-        showNextScreen(model);
+      } else if (remaining.abs() < staticNextUpTime) {
+        showNextScreen(model, remaining);
         return;
       }
     }
@@ -152,9 +159,10 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
     final currentItem = ref.watch(playBackModel.select((value) => value?.item));
     final portraitMode = MediaQuery.sizeOf(context).width < MediaQuery.sizeOf(context).height;
 
-    double padding = show ? 16 : 0;
+    double padding = (show && nextStyle == AutoNextStyle.detailed) ? 16 : 0;
 
     ref.listen(mediaPlaybackProvider, (previous, next) => determineShow(next));
+
     return Hero(
       tag: videoPlayerHeroTag,
       child: Stack(
@@ -162,7 +170,8 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
           Container(
             color: Theme.of(context).colorScheme.surfaceContainerLowest.withValues(alpha: 0.2),
           ),
-          if (nextUp != null)
+          // Detailed style - full card
+          if (nextUp != null && nextStyle == AutoNextStyle.detailed)
             AnimatedAlign(
               duration: animSpeed,
               alignment: portraitMode ? Alignment.bottomCenter : Alignment.centerRight,
@@ -237,8 +246,8 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
               padding: EdgeInsets.all(padding).add(show ? MediaQuery.paddingOf(context) : EdgeInsets.zero),
               child: AnimatedFractionallySizedBox(
                 duration: animSpeed,
-                heightFactor: show ? (portraitMode ? 0.40 : 0.9) : 1.0,
-                widthFactor: show ? (portraitMode ? 1 : 0.60) : 1.0,
+                heightFactor: (show && nextStyle == AutoNextStyle.detailed) ? (portraitMode ? 0.40 : 0.9) : 1.0,
+                widthFactor: (show && nextStyle == AutoNextStyle.detailed) ? (portraitMode ? 1 : 0.60) : 1.0,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,7 +255,7 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
                     if (currentItem != null)
                       AnimatedFadeSize(
                         duration: animSpeed,
-                        child: show
+                        child: (show && nextStyle == AutoNextStyle.detailed)
                             ? Padding(
                                 padding: const EdgeInsets.only(bottom: 16),
                                 child: Row(
@@ -296,14 +305,15 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
                             duration: animSpeed,
                             decoration: BoxDecoration(
                               color: Colors.black,
-                              borderRadius: BorderRadius.circular(show ? 16 : 0),
+                              borderRadius:
+                                  BorderRadius.circular((show && nextStyle == AutoNextStyle.detailed) ? 16 : 0),
                             ),
                             child: widget.video,
                           ),
                           IgnorePointer(
-                            ignoring: show,
+                            ignoring: (show && nextStyle == AutoNextStyle.detailed),
                             child: AnimatedOpacity(
-                              opacity: show ? 0 : 1,
+                              opacity: (show && nextStyle == AutoNextStyle.detailed) ? 0 : 1,
                               duration: animSpeed,
                               child: widget.controls,
                             ),
@@ -312,10 +322,10 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
                       ),
                     ),
                     IgnorePointer(
-                      ignoring: !show,
+                      ignoring: !(show && nextStyle == AutoNextStyle.detailed),
                       child: AnimatedFadeSize(
                         duration: animSpeed,
-                        child: show
+                        child: (show && nextStyle == AutoNextStyle.detailed)
                             ? Padding(
                                 padding: const EdgeInsets.only(top: 16),
                                 child: _SimpleControls(
@@ -330,12 +340,30 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
               ),
             ),
           ),
-          if (AdaptiveLayout.of(context).isDesktop)
-            IgnorePointer(
-              ignoring: !show,
+          // Minimal style - compact button (above controls)
+          if (nextUp != null && nextStyle == AutoNextStyle.minimal)
+            AnimatedAlign(
+              duration: animSpeed,
+              alignment: Alignment.bottomRight,
               child: AnimatedOpacity(
                 duration: animSpeed,
                 opacity: show ? 1 : 0,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20, bottom: 5),
+                  child: _MinimalNextUpButton(
+                    item: nextUp,
+                    controller: timerController,
+                    onSkip: onTimeOut,
+                  ),
+                ),
+              ),
+            ),
+          if (AdaptiveLayout.of(context).isDesktop)
+            IgnorePointer(
+              ignoring: !(show && nextStyle == AutoNextStyle.detailed),
+              child: AnimatedOpacity(
+                duration: animSpeed,
+                opacity: (show && nextStyle == AutoNextStyle.detailed) ? 1 : 0,
                 child: const Align(
                   alignment: Alignment.topRight,
                   child: DefaultTitleBar(),
@@ -435,6 +463,84 @@ class _NextUpInformation extends StatelessWidget {
           ),
         )
     };
+  }
+}
+
+class _MinimalNextUpButton extends ConsumerWidget {
+  final ItemBaseModel item;
+  final RestartableTimerController controller;
+  final Function()? onSkip;
+
+  const _MinimalNextUpButton({
+    required this.item,
+    required this.controller,
+    this.onSkip,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return StreamBuilder<Duration>(
+        stream: controller.timeLeft,
+        builder: (context, snapshot) {
+          final timeLeft = snapshot.data ?? Duration.zero;
+
+          return Stack(
+            alignment: Alignment.centerRight,
+            clipBehavior: Clip.none,
+            children: [
+              // Next button
+              AnimatedFadeSize(
+                child: ElevatedButton(
+                  onPressed: onSkip,
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.85),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 200, minWidth: 100, minHeight: 40, maxHeight: 40),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            item.label(context.localized) ?? context.localized.playNextVideo,
+                            maxLines: 1,
+                            overflow: TextOverflow.fade,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Pause button
+              Positioned(
+                top: -10,
+                right: 0,
+                child: Column(
+                  children: [
+                    SizedBox.square(
+                      dimension: 32,
+                      child: ProgressFloatingButton(
+                        controller: controller,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      timeLeft.inSeconds.toString(),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
   }
 }
 

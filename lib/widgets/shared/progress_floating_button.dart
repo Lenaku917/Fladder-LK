@@ -80,9 +80,11 @@ class RestartableTimerController {
 
   Stream<Duration> get timeLeft => _timeLeftController.stream;
 
-  void setDuration(Duration value) => {
-        _duration = value,
-      };
+  void setDuration(Duration value) {
+    _duration = value;
+    setTimeLeft = value;
+    _timer?.reset();
+  }
 
   void cancel() {
     if (_timer?.isActive == true) {

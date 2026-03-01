@@ -173,6 +173,113 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
         const SizedBox(height: 12),
         ...settingsListGroup(
           context,
+          SettingsLabelDivider(label: context.localized.settingsAutoNextTitle),
+          [
+            // Preview style
+            Column(
+              children: [
+                SettingsListTile(
+                  label: Text(context.localized.settingsAutoNextStyleTitle),
+                  subLabel: Text(context.localized.settingsAutoNextStyleDesc),
+                  trailing: EnumBox(
+                    current: ref.watch(
+                      videoPlayerSettingsProvider.select(
+                        (value) => value.nextVideoStyle.label(context),
+                      ),
+                    ),
+                    itemBuilder: (context) => AutoNextStyle.values
+                        .map(
+                          (entry) => ItemActionButton(
+                            label: Text(entry.label(context)),
+                            action: () => ref.read(videoPlayerSettingsProvider.notifier).state =
+                                videoSettings.copyWith(nextVideoStyle: entry),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+                AnimatedFadeSize(
+                  child: switch (ref.watch(videoPlayerSettingsProvider.select((value) => value.nextVideoStyle))) {
+                    AutoNextStyle.off => SettingsMessageBox(AutoNextStyle.off.desc(context)),
+                    AutoNextStyle.minimal => SettingsMessageBox(AutoNextStyle.minimal.desc(context)),
+                    AutoNextStyle.detailed => SettingsMessageBox(AutoNextStyle.detailed.desc(context)),
+                  },
+                ),
+              ],
+            ),
+
+            AnimatedFadeSize(
+              child: videoSettings.nextVideoStyle == AutoNextStyle.off
+                  ? const SizedBox.shrink()
+                  : Column(
+                      children: [
+                        // Preview time
+                        SettingsListTile(
+                          label: Text(context.localized.settingsAutoNextTimeTitle),
+                          subLabel: Text(context.localized.settingsAutoNextTimeDesc),
+                          trailing: EnumBox(
+                            current: ref.watch(
+                              videoPlayerSettingsProvider.select(
+                                (value) => value.nextVideoType.label(context),
+                              ),
+                            ),
+                            itemBuilder: (context) => AutoNextType.values
+                                .map(
+                                  (entry) => ItemActionButton(
+                                    label: Text(entry.label(context)),
+                                    action: () => ref.read(videoPlayerSettingsProvider.notifier).state =
+                                        videoSettings.copyWith(nextVideoType: entry),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                        AnimatedFadeSize(
+                          child: switch (
+                              ref.watch(videoPlayerSettingsProvider.select((value) => value.nextVideoType))) {
+                            AutoNextType.smart => SettingsMessageBox(AutoNextType.smart.desc(context)),
+                            AutoNextType.static => SettingsMessageBox(AutoNextType.static.desc(context)),
+                          },
+                        ),
+
+                        // Remaining playtime
+                        SettingsListTile(
+                          label: Text(context.localized.settingsStaticTimeTitle),
+                          subLabel: Text(context.localized.settingsStaticTimeDesc),
+                          trailing: IntInputField(
+                            suffix: context.localized.seconds(30),
+                            controller:
+                                TextEditingController(text: videoSettings.staticNextUpTime.inSeconds.toString()),
+                            onSubmitted: (value) {
+                              if (value != null) {
+                                ref.read(videoPlayerSettingsProvider.notifier).setStaticNextUpTime(value);
+                              }
+                            },
+                          ),
+                        ),
+
+                        // Auto-next delay
+                        SettingsListTile(
+                          label: Text(context.localized.settingsDelayNextTitle),
+                          subLabel: Text(context.localized.settingsDelayNextDesc),
+                          trailing: IntInputField(
+                            suffix: context.localized.seconds(30),
+                            controller: TextEditingController(text: videoSettings.autoNextDelay.inSeconds.toString()),
+                            onSubmitted: (value) {
+                              if (value != null) {
+                                ref.read(videoPlayerSettingsProvider.notifier).setAutoNextDelay(value);
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ...settingsListGroup(
+          context,
           SettingsLabelDivider(label: context.localized.shortCuts),
           [
             if (userSettings != null)
@@ -466,37 +573,6 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
                     messageType: MessageType.info,
                     "${context.localized.noVideoPlayerOptions}\n${context.localized.mdkExperimental}"),
               },
-            ),
-            Column(
-              children: [
-                SettingsListTile(
-                  label: Text(context.localized.settingsAutoNextTitle),
-                  subLabel: Text(context.localized.settingsAutoNextDesc),
-                  trailing: EnumBox(
-                    current: ref.watch(
-                      videoPlayerSettingsProvider.select(
-                        (value) => value.nextVideoType.label(context),
-                      ),
-                    ),
-                    itemBuilder: (context) => AutoNextType.values
-                        .map(
-                          (entry) => ItemActionButton(
-                            label: Text(entry.label(context)),
-                            action: () => ref.read(videoPlayerSettingsProvider.notifier).state =
-                                videoSettings.copyWith(nextVideoType: entry),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-                AnimatedFadeSize(
-                  child: switch (ref.watch(videoPlayerSettingsProvider.select((value) => value.nextVideoType))) {
-                    AutoNextType.smart => SettingsMessageBox(AutoNextType.smart.desc(context)),
-                    AutoNextType.static => SettingsMessageBox(AutoNextType.static.desc(context)),
-                    _ => const SizedBox.shrink(),
-                  },
-                ),
-              ],
             ),
             if (!AdaptiveLayout.of(context).isDesktop && !kIsWeb && !ref.read(argumentsStateProvider).htpcMode)
               SettingsListTile(

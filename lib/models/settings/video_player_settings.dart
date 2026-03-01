@@ -73,7 +73,10 @@ abstract class VideoPlayerSettingsModel with _$VideoPlayerSettingsModel {
     PlayerOptions? playerOptions,
     @Default(100) double internalVolume,
     Set<DeviceOrientation>? allowedOrientations,
+    @Default(AutoNextStyle.detailed) AutoNextStyle nextVideoStyle,
     @Default(AutoNextType.smart) AutoNextType nextVideoType,
+    @Default(Duration(seconds: 30)) Duration staticNextUpTime,
+    @Default(Duration(seconds: 5)) Duration autoNextDelay,
     @Default(Bitrate.original) Bitrate maxHomeBitrate,
     @Default(Bitrate.original) Bitrate maxInternetBitrate,
     String? audioDevice,
@@ -188,21 +191,38 @@ enum Screensaver {
       };
 }
 
-enum AutoNextType {
+enum AutoNextStyle {
   off,
+  minimal,
+  detailed;
+
+  const AutoNextStyle();
+
+  String label(BuildContext context) => switch (this) {
+        AutoNextStyle.off => context.localized.off,
+        AutoNextStyle.minimal => context.localized.autoNextStyleMinimal,
+        AutoNextStyle.detailed => context.localized.autoNextStyleDetailed,
+      };
+
+  String desc(BuildContext context) => switch (this) {
+        AutoNextStyle.off => context.localized.autoNextStyleOffDesc,
+        AutoNextStyle.minimal => context.localized.autoNextStyleMinimalDesc,
+        AutoNextStyle.detailed => context.localized.autoNextStyleDetailedDesc,
+      };
+}
+
+enum AutoNextType {
   smart,
   static;
 
   const AutoNextType();
 
   String label(BuildContext context) => switch (this) {
-        AutoNextType.off => context.localized.off,
         AutoNextType.smart => context.localized.autoNextOffSmartTitle,
         AutoNextType.static => context.localized.autoNextOffStaticTitle,
       };
 
   String desc(BuildContext context) => switch (this) {
-        AutoNextType.off => context.localized.off,
         AutoNextType.smart => context.localized.autoNextOffSmartDesc,
         AutoNextType.static => context.localized.autoNextOffStaticDesc,
       };

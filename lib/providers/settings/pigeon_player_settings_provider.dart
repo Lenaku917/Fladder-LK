@@ -54,11 +54,12 @@ final pigeonPlayerSettingsSyncProvider = Provider<void>((ref) {
             ),
           ),
           themeColor: color,
-          autoNextType: switch (value.nextVideoType) {
-            AutoNextType.off => pigeon.AutoNextType.off,
-            AutoNextType.static => pigeon.AutoNextType.static,
-            AutoNextType.smart => pigeon.AutoNextType.smart,
-          },
+          autoNextType: value.nextVideoStyle == AutoNextStyle.off
+              ? pigeon.AutoNextType.off
+              : switch (value.nextVideoType) {
+                  AutoNextType.static => pigeon.AutoNextType.static,
+                  AutoNextType.smart => pigeon.AutoNextType.smart,
+                },
           skipBackward: (userData?.userSettings?.skipBackDuration ?? const Duration(seconds: 15)).inMilliseconds,
           skipForward: (userData?.userSettings?.skipForwardDuration ?? const Duration(seconds: 30)).inMilliseconds,
           fillScreen: value.fillScreen,
