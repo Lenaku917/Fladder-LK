@@ -15,7 +15,6 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -50,17 +49,16 @@ class BatteryOptimizationPigeon {
 
   final String pigeonVar_messageChannelSuffix;
 
-  /// Returns whether the app is currently *ignored* from battery optimizations.
   Future<bool> isIgnoringBatteryOptimizations() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.nl_jknaapen_fladder.settings.BatteryOptimizationPigeon.isIgnoringBatteryOptimizations$pigeonVar_messageChannelSuffix';
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.nl_jknaapen_fladder.settings.BatteryOptimizationPigeon.isIgnoringBatteryOptimizations$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -79,17 +77,16 @@ class BatteryOptimizationPigeon {
     }
   }
 
-  /// Opens the battery-optimization/settings screen for this app (Android).
   Future<void> openBatteryOptimizationSettings() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.nl_jknaapen_fladder.settings.BatteryOptimizationPigeon.openBatteryOptimizationSettings$pigeonVar_messageChannelSuffix';
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.nl_jknaapen_fladder.settings.BatteryOptimizationPigeon.openBatteryOptimizationSettings$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
