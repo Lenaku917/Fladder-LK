@@ -68,7 +68,8 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
       show = true;
       // Calculate countdown: remaining playtime + autoNextDelay
       final delay = ref.read(videoPlayerSettingsProvider.select((value) => value.autoNextDelay));
-      final totalCountdown = remainingPlaytime + delay;
+      Duration countdown = remainingPlaytime + delay;
+      final totalCountdown = countdown >= Duration.zero ? countdown : Duration.zero;
 
       timerController.setDuration(totalCountdown);
       timerController.play();

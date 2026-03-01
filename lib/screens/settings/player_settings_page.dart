@@ -265,6 +265,7 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
                           trailing: IntInputField(
                             suffix: context.localized.seconds(30),
                             controller: TextEditingController(text: videoSettings.autoNextDelay.inSeconds.toString()),
+                            allowSign: true,
                             onSubmitted: (value) {
                               if (value != null) {
                                 ref.read(videoPlayerSettingsProvider.notifier).setAutoNextDelay(value);

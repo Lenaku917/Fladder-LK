@@ -142,7 +142,7 @@ class VideoPlayerSettingsProviderNotifier extends StateNotifier<VideoPlayerSetti
   }
 
   void setAutoNextDelay(int seconds) {
-    final clampedValue = seconds.clamp(0, 120);
+    final clampedValue = seconds.clamp(-120, 120);
     state = state.copyWith(autoNextDelay: Duration(seconds: clampedValue));
   }
 }

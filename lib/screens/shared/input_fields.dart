@@ -9,12 +9,14 @@ import 'package:fladder/screens/shared/outlined_text_field.dart';
 class IntInputField extends ConsumerWidget {
   final int? value;
   final TextEditingController? controller;
+  final bool? allowSign;
   final String? placeHolder;
   final String? suffix;
   final Function(int? value)? onSubmitted;
   const IntInputField({
     this.value,
     this.controller,
+    this.allowSign,
     this.suffix,
     this.placeHolder,
     this.onSubmitted,
@@ -32,8 +34,12 @@ class IntInputField extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 6),
         child: OutlinedTextField(
           controller: controller ?? TextEditingController(text: (value ?? 0).toString()),
-          keyboardType: const TextInputType.numberWithOptions(decimal: false, signed: false),
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          keyboardType: TextInputType.numberWithOptions(decimal: false, signed: allowSign),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(
+              RegExp(allowSign == true ? r"[0-9\-]" : r"[0-9]"),
+            ),
+          ],
           textInputAction: TextInputAction.done,
           onSubmitted: (value) => onSubmitted?.call(int.tryParse(value)),
           textAlign: TextAlign.center,
